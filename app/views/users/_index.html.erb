@@ -12,6 +12,19 @@
         <td><%= attachment_image_tag(user, :profile_image, :fill, 50, 50, fallback: "no-image-icon.jpg") %></td>
         <td><%= user.name %></td>
         <td><%= link_to 'Show', user_path(user), class: "user_#{user.id}" %></td>
+        <td>
+          <% if book.favorited_by?(current_user) %>
+            <%= link_to book_favorites_path(book), method: :delete do %>
+            ♥<%= book.favorites.count %> コメント数
+          <% end %>
+        </td>
+        <% else %>
+          <td>
+            <%= link_to book_favorites_path(book), method: :post do %>
+              ♡<%= book.favorites.count %> コメント数
+            <% end %>
+          </td>  
+        <% end %>
       </tr>
     <% end %>
   </tbody>
