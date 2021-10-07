@@ -17,19 +17,9 @@
           </td>
           <td><%= link_to @book.title, book_path(@book) %></td>
           <td><%= @book.body %></td>
-          <td>
-            <% if @book.favorited_by?(current_user) %>
-              <%= link_to book_favorites_path(@book), method: :delete do %>
-            　    ♥<%= @book.favorites.count %>
-              <% end %>
-          </td>
-          <% else %>
-          <td>
-            <%= link_to book_favorites_path(@book), method: :post do %>
-              ♡<%= @book.favorites.count %> 
-            <% end %>
-          </td> 
-          <% end %>
+          <td id="favorite_buttons_<%= @book.id %>">
+            <%= render "favorites/favorites", book: @book %>
+          </td>  
           <td>コメント件数：<%= @book.post_comments.count %></td>
           <% if @user.id == current_user.id %>
             <td><%= link_to 'Edit', edit_book_path(@book), class: "btn btn-sm btn-success edit_book_#{@book.id}" %></td>
@@ -38,17 +28,20 @@
         </tr>
       </table>
       <div>
-        <% @book.post_comments.each do |post_comment| %>
-          <p><%= attachment_image_tag(@book.user, :profile_image, :fill, 50, 50, fallback: "no-image-icon.jpg") %></p>
-          <%= post_comment.user.name %>
-          <%= post_comment.created_at.strftime('%Y/%m/%d') %><%= post_comment.comment %>
+        <% if @comments %>
+          <div class="commentsArea">
+            <%= render partial: "post_comments/comment", locals: { comments: @comments }%>
+          </div>
+        <% else %>
+          <p>コメントはまだありません</p>
         <% end %>
-      </div>
-      <div>
-        <%= form_with(model:[@book, @post_comment], local: true) do |f| %>
-          <%= f.text_area :comment, rows:'5',placeholder: "コメントをここに" %>
-          <%= f.submit "送信する" %>
-        <% end %>
+
+        <div class="bottomInput">
+          <%= form_with(model: [@book, @comment], id: "new-comment") do |f| %>
+            <%= f.text_area :comment, class: "inputComment" %>
+            <%= f.submit "コメントする", class: "submitComment" %>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
